@@ -92,6 +92,25 @@ MouseGetPos,,, WinUMID
 WinActivate, ahk_id %WinUMID%
 return
 
+; Alt + T - Window under mouse curson will be sent to the back of z-index (same as Alt + Down arrow and Alt + Middle Click)
+!t::
+MouseGetPos,,, WinUMID
+WinActivate, ahk_id %WinUMID%
+Send, !{Esc}
+MouseGetPos,,, WinUMID
+WinActivate, ahk_id %WinUMID%
+return
+
+; Alt + N - Window under mouse curson will be sent to the back of z-index (same as Alt + Up arrow and Alt + Middle Click)
+!n::
+MouseGetPos,,, WinUMID
+WinActivate, ahk_id %WinUMID%
+Send, !{Esc}
+MouseGetPos,,, WinUMID
+WinActivate, ahk_id %WinUMID%
+return
+
+
 ; Shift + Alt + Up arrow - Maximize focused window (Sends Super+Up)
 !+Up::
 Send, #{Up}
@@ -99,6 +118,17 @@ return
 
 ; Shift + Alt + Down arrow - Restore/Minimize focused window (If maximized then "restore" (un-maximize), if un-maximized then minimize) (Sends Super+Down)
 !+Down::
+Send, #{Down}
+return
+
+
+; Shift + Alt + N arrow - Maximize focused window (Sends Super+Up)
+!+n::
+Send, #{Up}
+return
+
+; Shift + Alt + T arrow - Restore/Minimize focused window (If maximized then "restore" (un-maximize), if un-maximized then minimize) (Sends Super+Down)
+!+t::
 Send, #{Down}
 return
 
@@ -130,6 +160,36 @@ If (posY >= 4790)
 MouseMove, 2210, 1250, 0
 Send, #+{Left}
 return
+
+; Shift + Alt + Right - Moves window under mouse cursor to the screen to the right. Moves mouse cursor with it 
+; (relies on hardcoded coordinate values specific to my workstation/monitor configuration)
+!+s::
+MouseGetPos,,, WinUMID
+WinActivate, ahk_id %WinUMID%
+MouseGetPos,posY
+Sleep,10
+If (posY <= -1)
+MouseMove, 2210, 1250, 0
+If (posY <= 4790 && posY >=0)
+MouseMove, 6983, 1250, 0
+Send, #+{Right}
+return
+
+; Shift + Alt + Left - Moves window under mouse cursor to the screen to the left. Moves mouse cursor with it 
+; (relies on hardcoded coordinate values specific to my workstation/monitor configuration)
+!+h::
+MouseGetPos,,, WinUMID
+WinActivate, ahk_id %WinUMID%
+MouseGetPos,posY
+Sleep,10
+If (posY >= 0 && posY <=4790)
+MouseMove, -1317, 1250, 0
+If (posY >= 4790)
+MouseMove, 2210, 1250, 0
+Send, #+{Left}
+return
+
+
 
 ; Alt + Left - Moves cursor to the screen to the left. Focuses the window that the mouse lands on.
 ; (relies on hardcoded coordinate values specific to my workstation/monitor configuration)
@@ -167,6 +227,45 @@ WinActivate, ahk_id %WinUMID%
 
 Return
 
+
+; Alt + H - Moves cursor to the screen to the left. Focuses the window that the mouse lands on.
+; (relies on hardcoded coordinate values specific to my workstation/monitor configuration)
+!h::
+MouseGetPos,posY
+Sleep,10
+
+If (posY >= 0 && posY <=4790)
+MouseMove, -1317, 1250, 0
+MouseGetPos,,, WinUMID
+WinActivate, ahk_id %WinUMID%
+
+If (posY >= 4790)
+MouseMove, 2210, 1250, 0
+MouseGetPos,,, WinUMID
+WinActivate, ahk_id %WinUMID%
+
+Return
+
+; Alt + S - Moves cursor to the screen to the right. Focuses the window that the mouse lands on.
+; (relies on hardcoded coordinate values specific to my workstation/monitor configuration)
+!s::
+MouseGetPos,posY
+Sleep,10
+
+If (posY <= -1)
+MouseMove, 2210, 1250, 0
+MouseGetPos,,, WinUMID
+WinActivate, ahk_id %WinUMID%
+
+If (posY <= 4790 && posY >=0)
+MouseMove, 6983, 1250, 0
+MouseGetPos,,, WinUMID
+WinActivate, ahk_id %WinUMID%
+
+Return
+
+
+
 ; Alt + Wheel Down - Sends Ctrl + Tab (Cycles through tabs in firefox/chrome/sublimetext etc)
 !WheelDown::
 MouseGetPos,KDE_X1,KDE_Y1,KDE_id
@@ -199,11 +298,18 @@ WinActivate, ahk_id %KDE_id%
 Send, {End}
 return
 
+; Shift + Alt + Enter - opens siteconfig to the directory of a specific service request.
+; Usage: copy a service request number to your clip board and then press Alt + Enter.
+!+enter::
+Run, open \\se3cdpcdsfs\Global\%Clipboard%
+return
+
 ; Alt + Enter - opens siteconfig to the directory of a specific service request.
 ; Usage: copy a service request number to your clip board and then press Alt + Enter.
 !enter::
-Run, open \\se3cdpcdsfs\Global\%Clipboard%
+Run, C:\Users\wahl\Downloads\cmder\Cmder.exe
 return
+
 
 ; Ctrl + Alt + C - quick close a service request. 
 ; (relies on hardcoded coordinate values specific to my screen resolution and browser)
@@ -263,6 +369,7 @@ MouseGetPos x0, y0
 
 
  if (A_PriorHotKey = A_ThisHotKey and A_TimeSincePriorHotkey < DllCall("GetDoubleClickTime"))            
+      Sleep 20
       Send ^c
 
  if (A_PriorHotKey = A_ThisHotKey and A_TimeSincePriorHotkey < DllCall("GetDoubleClickTime"))
@@ -280,5 +387,5 @@ return
   return
 
 #If
-Esc::ExitApp
+;Esc::ExitApp
 return
